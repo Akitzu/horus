@@ -145,7 +145,7 @@ def plot_convergence_domain(R, Z, assigned_to, fixed_points, ax=None, colors=Non
     if colors is None:
         colors = cm.rainbow(np.linspace(0, 1, len(fixed_points) + 1))
         colors[:, 3] = 0.8
-        colors = np.vstack(([0.5, 0.5, 0.5, 0.5], colors))
+        colors = np.vstack(([0.3, 0.3, 0.3, 0.15], colors))
 
     cmap = np.array([colors[j] for j in assigned_to])
     cmap = cmap.reshape(R.shape[0], R.shape[1], cmap.shape[1])
@@ -161,10 +161,13 @@ def plot_convergence_domain(R, Z, assigned_to, fixed_points, ax=None, colors=Non
     #     ax.scatter(r, z, color = 'blue', s = 1)
 
     for i, fpt in enumerate(fixed_points):
-        if fpt.GreenesResidue < 0:
-            marker = "X"
-        elif fpt.GreenesResidue > 0:
-            marker = "o"
+        if hasattr(fpt, "GreenesResidue"):
+            if fpt.GreenesResidue < 0:
+                marker = "X"
+            elif fpt.GreenesResidue > 0:
+                marker = "o"
+            else:
+                marker = "s"
         else:
             marker = "s"
 
@@ -175,7 +178,9 @@ def plot_convergence_domain(R, Z, assigned_to, fixed_points, ax=None, colors=Non
             marker=marker,
             edgecolors="black",
             linewidths=1,
+            label=f"[{fpt.x[0]:.2f},{ fpt.z[0]:.2f}]",
         )
+
 
     # # Plot arrows from the meshgrid points to the fixed points they converge to
     # for r, z, a in zip(R.flat, Z.flat, assigned_to.flat):
