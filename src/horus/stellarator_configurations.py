@@ -1,11 +1,11 @@
-from simsopt.configs import get_ncsx_data, get_w7x_data
-from simsopt.field import (
+from simsopt.configs import get_ncsx_data, get_w7x_data # type: ignore
+from simsopt.field import ( # type: ignore
     BiotSavart,
     InterpolatedField,
     coils_via_symmetries,
     SurfaceClassifier,
 )
-from simsopt.geo import SurfaceRZFourier
+from simsopt.geo import SurfaceRZFourier # type: ignore
 import numpy as np
 
 ### Stellerator configurations ###

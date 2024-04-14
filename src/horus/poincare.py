@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
-from simsopt.field import (
+from simsopt.field import ( # type: ignore
     compute_fieldlines,
     LevelsetStoppingCriterion,
 )

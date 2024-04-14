@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.integrate import solve_ivp
-from pyoculus.problems import CylindricalBfield
-from simsopt.field import MagneticField
+from pyoculus.problems import CylindricalBfield # type: ignore
+from simsopt.field import MagneticField # type: ignore
 
 
 def normalize(v: np.ndarray) -> np.ndarray:
