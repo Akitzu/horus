@@ -1,4 +1,4 @@
-from pyoculus.solvers import FixedPoint
+from pyoculus.solvers import FixedPoint # type: ignore
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
