@@ -5,33 +5,47 @@ from simsopt.field import ( # type: ignore
     compute_fieldlines,
     LevelsetStoppingCriterion,
 )
+import pickle
 
 ### Drawing of a Poincare section ###
 
 
-class PoincarePlanes:
-    @classmethod
-    def from_ivp(cls, out):
-        cls.out = out
+class PoincarePlanes():
+
+    def plot(self, phis, **kwargs):
+        return plot_poincare_data(self.phi_hits, phis, **kwargs)
+
+    def save(self, filename):
+        with open(filename, 'wb') as f:
+            pickle.dump((self.tys, self.phi_hits), f)
 
     @classmethod
+    def from_ivp(cls, out):
+        instance = cls()
+        instance.out = out
+        return instance
+
+    @classmethod    
     def from_simsopt(cls, fieldlines_tys, fieldlines_phi_hits):
-        cls.tys = fieldlines_tys
-        cls.phi_hits = fieldlines_phi_hits
+        instance = cls()
+        instance.tys = fieldlines_tys
+        instance.phi_hits = fieldlines_phi_hits
+        return instance
 
     @classmethod
     def from_record(cls, record):
-        cls.record = record
+        instance = cls()
+        instance.record = record
+        return instance
 
-    @property
-    def hits(self):
-        if hasattr(self, "out"):
-            return self.out
-        elif hasattr(self, "phi_hits"):
-            return self.phi_hits
-        elif hasattr(self, "record"):
-            return self.record
-
+    # @property
+    # def hits(self):
+    #     if hasattr(self, "out"):
+    #         return self.out
+    #     elif hasattr(self, "phi_hits"):
+    #         return self.phi_hits
+    #     elif hasattr(self, "record"):
+    #         return self.record
 
 def plot_poincare_data(
     fieldlines_phi_hits,
@@ -135,15 +149,15 @@ def poincare(
         record = poincare_ivp(bs, RZstart, phis, **kwargs)
         pplane = PoincarePlanes.from_record(record)
 
-    if plot:
-        fig, ax = pplane.plot()
-        return fieldlines_tys, fieldlines_phi_hits, fig, ax
+    # if plot:
+    #     fig, ax = pplane.plot()
+    #     return fieldlines_tys, fieldlines_phi_hits, fig, ax
 
     return pplane
 
 
 def poincare_simsopt(bs, RZstart, phis, sc_fieldline, **kwargs):
-    options = {"tmax": 40000, "tol": 1e-7, "comm": None}
+    options = {"tmax": 40000, "tol": 1e-9, "comm": None}
     options.update(kwargs)
 
     fieldlines_tys, fieldlines_phi_hits = compute_fieldlines(

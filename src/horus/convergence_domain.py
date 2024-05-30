@@ -6,30 +6,49 @@ import numpy as np
 ### Convergence domain for the X-O point finders ###
 
 
-def join_convergence_domains(convdomA, convdomB, eps=1e-4):
-    """Join two convergence domain results, returning a new tuple with the same format."""
-    assignedB = convdomB[2].copy()
-    fplistA = convdomA[3].copy()
+def join_convergence_domains(convdomlist, eps=1e-5):
+    """Join together a list of convergence domain results, returning a new tuple with the same format."""
+    convdomReturn = ([], [], [])
 
-    for i, fp in enumerate(convdomB[3]):
-        fp_xyz = np.array([fp.x[0], fp.y[0], fp.z[0]])
-        found_prev = False
-        for j, fp_prev in enumerate(convdomA[3]):
-            fp_prev_xyz = np.array([fp_prev.x[0], fp_prev.y[0], fp_prev.z[0]])
-            if np.isclose(fp_xyz, fp_prev_xyz, atol=eps).all():
-                assignedB[assignedB == j] = i
-                found_prev = True
-                break
-        if not found_prev:
-            assignedB[assignedB == i] = len(fplistA)
-            fplistA.append(fp)
+    for convdom in convdomlist:
+        R_values, Z_values, _, _, all_fixed_points = convdom
+        convdomReturn[0].append(R_values)
+        convdomReturn[1].append(Z_values)
+        convdomReturn[2].append(all_fixed_points)
 
-    return (
-        np.concatenate((convdomA[0], convdomB[0])),
-        np.concatenate((convdomA[1], convdomB[1])),
-        np.concatenate((convdomA[2], assignedB)),
-        fplistA,
-    )
+    R_values = np.concatenate(convdomReturn[0])
+    Z_values = np.concatenate(convdomReturn[1])
+    all_fixed_points = np.concatenate(convdomReturn[2])
+
+    # Get the indices that would sort R_values and Z_values
+    R_sort_indices = np.argsort(R_values)
+    Z_sort_indices = np.argsort(Z_values)
+
+    # Use these indices to rearrange all_fixed_points
+    all_fixed_points = all_fixed_points[R_sort_indices][Z_sort_indices]
+
+    # # Reloop through the sorted arrays and assign the correct index to each point
+
+    # for fp in all_fixed_points:
+    #         fp_result = all_fixed_points[i]
+
+    #         if fp_result.successful is True:
+    #             fp_result_xyz = np.array([fp_result.x[0], fp_result.y[0], fp_result.z[0]])
+    #             assigned = False
+    #             for j, fpt in enumerate(fixed_points):
+    #                 fpt_xyz = np.array([fpt.x[0], fpt.y[0], fpt.z[0]])
+    #                 if np.isclose(fp_result_xyz, fpt_xyz, atol=options["eps"]).all():
+    #                     assigned_to.append(j)
+    #                     assigned = True
+    #             if not assigned:
+    #                 assigned_to.append(len(fixed_points))
+    #                 fixed_points.append(fp_result)
+    #             all_fixed_points.append(fp_result)
+    #         else:
+    #             assigned_to.append(-1)
+    #             all_fixed_points.append(None)
+
+    # return R_values, Z_values, assigned_to, all_fixed_points
 
 
 def convergence_domain(ps, Rw, Zw, **kwargs):
@@ -114,7 +133,7 @@ def convergence_domain(ps, Rw, Zw, **kwargs):
             all_fixed_points.append(fp_result)
         else:
             assigned_to.append(-1)
-            all_fixed_points.append(None)
+            all_fixed_points.append(fp_result)
 
     return R, Z, np.array(assigned_to), fixed_points, all_fixed_points
 
