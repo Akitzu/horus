@@ -159,13 +159,14 @@ def plot_convergence_domain(R, Z, assigned_to, fixed_points, ax=None, colors=Non
         tuple: (fig, ax)
     """
 
-    assigned_to = assigned_to + 1
+    assigned_to = assigned_to.flatten() + 1
+    assigned_to = assigned_to.astype(int)
 
     if colors is None:
-        colors = cm.rainbow(np.linspace(0, 1, len(fixed_points) + 1))
+        colors = cm.rainbow(np.linspace(0, 1, len(fixed_points)))
         colors[:, 3] = 0.8
         colors = np.vstack(([0.3, 0.3, 0.3, 0.15], colors))
-
+        
     cmap = np.array([colors[j] for j in assigned_to])
     cmap = cmap.reshape(R.shape[0], R.shape[1], cmap.shape[1])
 
