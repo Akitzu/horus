@@ -94,7 +94,7 @@ def convergence_domain(ps, Rw, Zw, **kwargs):
     options.update(kwargs)
 
     # set up the integrator
-    iparams = {"rtol": 1e-7}
+    iparams = {"rtol": 1e-13}
     iparams.update(kwargs)
 
     # set up the point finder
@@ -135,11 +135,11 @@ def convergence_domain(ps, Rw, Zw, **kwargs):
             assigned_to.append(-1)
             all_fixed_points.append(fp_result)
 
-    return R, Z, np.array(assigned_to), fixed_points, all_fixed_points
+    return np.array([R, Z, np.array(assigned_to).reshape(R.shape), np.array(all_fixed_points).reshape(R.shape)]), np.array(fixed_points, dtype=object)
 
 
-def plot_convergence_domain(convdom, ax=None, colors=None):
-    return plot_convergence_domain(*convdom[0:4], ax=ax, colors=colors)
+# def plot_convergence_domain(convdom, ax=None, colors=None):
+#     return plot_convergence_domain(*convdom[0:4], ax=ax, colors=colors)
 
 
 def plot_convergence_domain(R, Z, assigned_to, fixed_points, ax=None, colors=None):
